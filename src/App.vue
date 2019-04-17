@@ -10,7 +10,7 @@
 import Header from './components/head/Header.vue';
 import Tab from './components/tab/Tab.vue';
 
-
+  
 const ERR_OK = 0;
 const axios = require('axios');
 
@@ -44,6 +44,7 @@ export default {
     }
   }
 }
+
 </script>
 
 <style>
