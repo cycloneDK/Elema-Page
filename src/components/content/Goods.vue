@@ -1,8 +1,9 @@
 <template lang="html">
   <div class="goods">
-    <div class="menu-wrapper">
+    <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="item in goods" class="menu-item border-1px">
+        <li v-for="(item,index) in goods" class="menu-item border-1px" :class="{'current': currentIndex === index}"
+        @click="selectMenu(index,$event)">
           <span class="text">
               <span v-show="item.type>=0" :class="classMap[item.type]" class="icon"></span>
               {{item.name}}
@@ -10,9 +11,9 @@
         </li>
       </ul>
     </div>
-    <div class="foods-wrapper">
+    <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="foods-list">
+        <li v-for="item in goods" class="foods-list foods-list-hook">
           <h2 class="title">{{item.name}}</h2>
           <ul>
             <li v-for="food in item.foods" class="food-item border-1px">
@@ -31,16 +32,26 @@
                   <span v-show='food.oldPrice' class="oldPrice"><s>￥{{food.oldPrice}}</s></span>
                 </div>
               </div>
+              <div class="count">
+                <span class=""></span>
+                <span class=""></span>
+                <span class=""></span>
+              </div>
 
             </li>
           </ul>
         </li>
       </ul>
     </div>
+    <shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
   </div>
 </template>
 
 <script>
+import Bscroll from 'better-scroll';
+import shopcart from '../shopcart/shopcart'
+
+
 const ERR_OK = 0;
 const axios = require('axios');
 
@@ -51,24 +62,76 @@ export default {
   },
   data() {
     return {
-      goods: {}
+      goods: {},
+      foodsHeight: [],
+      scrollY: 0
     }
   },
   created() {
     this.getAjax();
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
   },
-  methods:{
-    getAjax:function (){
+  computed: {
+    currentIndex: function() {
+      for (let i = 0; i < this.foodsHeight.length; i++) {
+        let height1 = this.foodsHeight[i],
+          height2 = this.foodsHeight[i + 1];
+        if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+          return i;
+
+        }
+      }
+      return 0;
+    }
+  },
+  components:{
+    shopcart
+  },
+  methods: {
+    getAjax: function() {
       axios.get('/api/goods')
         .then((response) => {
           response = response.data;
           if (response.errno === ERR_OK) {
             this.goods = response.data;
+            this.$nextTick(() => {
+              this._initScorll();
+              this._calculateHeight();
+            });
           }
         }).catch((error) => {
           console.log(error);
+        });
+    },
+    _initScorll() {
+      this.menuScroll = new Bscroll(this.$refs.menuWrapper, {
+        click: true
       });
+      this.foodsScroll = new Bscroll(this.$refs.foodsWrapper, {
+        probeType: 3
+      });
+      this.foodsScroll.on('scroll', (pos) => {
+        this.scrollY = Math.abs(Math.round(pos.y));
+      });
+    },
+    _calculateHeight() {
+      let foods = this.$refs.foodsWrapper.getElementsByClassName('foods-list-hook');
+      let Height = 0,
+        len = foods.length;
+      this.foodsHeight.push(Height);
+      for (let i = 0; i < len; i++) {
+        let item = foods[i];
+        Height += item.clientHeight;
+        this.foodsHeight.push(Height);
+      }
+    },
+    selectMenu(index,event){
+      if(!event._constructed){
+        return
+      }
+      let foods = this.$refs.foodsWrapper.getElementsByClassName('foods-list-hook');
+      let el = foods[index];
+      this.foodsScroll.scrollToElement(el,300);
     }
   }
 }
@@ -95,8 +158,15 @@ export default {
       width: 56px
       font-size: 14px
       border-1px(rgba(7, 17, 27, 0.1))
-      // border-bottom: 1px solid rgba(7, 17, 27, 0.1)
-      margin: 0 auto
+      padding:0 12px
+      &.current
+        position: relative
+        z-index: 10
+        margin-top: -1px
+        font-weight: 700
+        background-color: #fff
+        .text
+          border-none()
       .text
         display: table-cell
         vertical-align: middle
@@ -165,7 +235,8 @@ export default {
             margin-right: 12px
         .price
           font-size: 14px
-          color: red
+          font-weight: 700
+          color: rgb(240,20,20)
           line-height: 24px
           .oldPrice
             font-size: 10px

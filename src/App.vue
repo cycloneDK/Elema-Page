@@ -2,7 +2,7 @@
 <div id="app">
   <v-header :seller='seller'></v-header>
   <v-tab></v-tab>
-  <router-view/>
+  <router-view :seller="seller"/>
 </div>
 </template>
 
@@ -10,7 +10,7 @@
 import Header from './components/head/Header.vue';
 import Tab from './components/tab/Tab.vue';
 
-  
+
 const ERR_OK = 0;
 const axios = require('axios');
 
