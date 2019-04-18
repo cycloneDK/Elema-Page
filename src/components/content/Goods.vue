@@ -31,12 +31,11 @@
                   <span >￥{{food.price}}</span>
                   <span v-show='food.oldPrice' class="oldPrice"><s>￥{{food.oldPrice}}</s></span>
                 </div>
+                <div class="cartControl-wrapper">
+                  <cartControl :food="food"></cartControl>
+                </div>
               </div>
-              <div class="count">
-                <span class=""></span>
-                <span class=""></span>
-                <span class=""></span>
-              </div>
+
 
             </li>
           </ul>
@@ -50,6 +49,7 @@
 <script>
 import Bscroll from 'better-scroll';
 import shopcart from '../shopcart/shopcart'
+import cartControl from '../cartControl/cartControl'
 
 
 const ERR_OK = 0;
@@ -85,7 +85,8 @@ export default {
     }
   },
   components:{
-    shopcart
+    shopcart,
+    cartControl
   },
   methods: {
     getAjax: function() {
@@ -108,6 +109,7 @@ export default {
         click: true
       });
       this.foodsScroll = new Bscroll(this.$refs.foodsWrapper, {
+        click: true,
         probeType: 3
       });
       this.foodsScroll.on('scroll', (pos) => {
@@ -241,6 +243,10 @@ export default {
           .oldPrice
             font-size: 10px
             color: rgb(147,153,159)
+        .cartControl-wrapper
+          position: absolute
+          bottom: 12px
+          right: 0
 
 
 
