@@ -5,7 +5,7 @@
       @click="decreaseCount($event)"></span>
     </transition>
     <span class="num" v-show="food.count>0">{{this.food.count}}</span>
-    <span class="add icon-add_circle" @click="addCount($event)"></span>
+    <span class="add icon-add_circle" @click="addCount($event);ballPosition($event)"></span>
   </div>
 </template>
 
@@ -29,7 +29,6 @@ export default {
       }else{
         this.food.count++;
       }
-      console.log(this.food.count);
     },
     decreaseCount(event){
       if(!event._constructed){
@@ -37,6 +36,12 @@ export default {
       }else if(this.food.count>0){
         this.food.count--;
       }
+    },
+    ballPosition(event){
+      if(!event._constructed){
+        return;
+      }
+      this.$emit("ballPosition",{"left":event.clientX,"top":event.clientY});
     }
   }
 }
@@ -47,10 +52,11 @@ export default {
   font-size: 24px
   line-height: 24px
   .move-enter-active, .move-leave-active
-    transition: transform 0.8s
+    transition: all 0.8s linear
   .move-enter, .move-leave-to
     opacity: 0
-    transform: translate3D(24px,0,0)
+    transform: translate3D(42px,0,0)
+    transform: rotate3d(0,0,1,120deg)
   .decrease, .add
     display: inline-block
     color: rgb(0, 160, 220)

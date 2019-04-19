@@ -32,7 +32,7 @@
                   <span v-show='food.oldPrice' class="oldPrice"><s>￥{{food.oldPrice}}</s></span>
                 </div>
                 <div class="cartControl-wrapper">
-                  <cartControl :food="food"></cartControl>
+                  <cartControl :food="food" @ballPosition="getPosition"></cartControl>
                 </div>
               </div>
 
@@ -42,7 +42,7 @@
         </li>
       </ul>
     </div>
-    <shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+    <shopcart  :selectFoods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
   </div>
 </template>
 
@@ -62,7 +62,7 @@ export default {
   },
   data() {
     return {
-      goods: {},
+      goods: [],
       foodsHeight: [],
       scrollY: 0
     }
@@ -78,13 +78,23 @@ export default {
           height2 = this.foodsHeight[i + 1];
         if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
           return i;
-
         }
       }
       return 0;
+    },
+    selectFoods() {
+      let foods = [];
+      this.goods.forEach((good) => {
+        good.foods.forEach((food)=>{
+          if(food.count){
+            foods.push(food);
+          }
+        })
+      });
+      return foods;
     }
   },
-  components:{
+  components: {
     shopcart,
     cartControl
   },
@@ -127,14 +137,18 @@ export default {
         this.foodsHeight.push(Height);
       }
     },
-    selectMenu(index,event){
-      if(!event._constructed){
+    selectMenu(index, event) {
+      if (!event._constructed) {
         return
       }
       let foods = this.$refs.foodsWrapper.getElementsByClassName('foods-list-hook');
       let el = foods[index];
-      this.foodsScroll.scrollToElement(el,300);
+      this.foodsScroll.scrollToElement(el, 300);
+    },
+    getPosition(pos){
+      console.log(pos);
     }
+
   }
 }
 </script>
