@@ -41,7 +41,7 @@ export default {
       if(!event._constructed){
         return;
       }
-      this.$emit("ballPosition",{"left":event.clientX,"top":event.clientY});
+      this.$emit("ballPosition",{"left":event.clientX+'px',"top":event.clientY+'px'});
     }
   }
 }

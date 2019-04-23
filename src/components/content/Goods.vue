@@ -31,7 +31,7 @@
                   <span >￥{{food.price}}</span>
                   <span v-show='food.oldPrice' class="oldPrice"><s>￥{{food.oldPrice}}</s></span>
                 </div>
-                <div class="cartControl-wrapper">
+                <div class="cartControl-wrapper" >
                   <cartControl :food="food" @ballPosition="getPosition"></cartControl>
                 </div>
               </div>
@@ -42,6 +42,9 @@
         </li>
       </ul>
     </div>
+    <!-- <div class="ball-wrapper" ref="ballWrapper">
+      <div  class="ball-hook" @transitioned="ballclass" :class = "ballClassMap[indexOfBall]"></div>
+    </div> -->
     <shopcart  :selectFoods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
   </div>
 </template>
@@ -64,12 +67,14 @@ export default {
     return {
       goods: [],
       foodsHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      indexOfBall: 0
     }
   },
   created() {
     this.getAjax();
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+      // this.ballClassMap = ['hide', 'from', 'to']
   },
   computed: {
     currentIndex: function() {
@@ -85,8 +90,8 @@ export default {
     selectFoods() {
       let foods = [];
       this.goods.forEach((good) => {
-        good.foods.forEach((food)=>{
-          if(food.count){
+        good.foods.forEach((food) => {
+          if (food.count) {
             foods.push(food);
           }
         })
@@ -145,9 +150,22 @@ export default {
       let el = foods[index];
       this.foodsScroll.scrollToElement(el, 300);
     },
-    getPosition(pos){
+    getPosition(pos) {
       console.log(pos);
+      // let ball = this.$refs.ballWrapper.getElementsByClassName('ball-hook');
+      // console.log(ball[0]);
+      //
+      // ball[0].style.left = pos.left;
+      // ball[0].style.top = pos.top;
+      // console.log(ball[0].style.left,ball[0].style.top);
+      // this.indexOfBall = 1;
+      // console.log()
+      //  this.indexOfBall = 2;
+
     }
+    //, ballclass(){
+    //   this.indexOfBall = 0;
+    // }
 
   }
 }
@@ -261,6 +279,19 @@ export default {
           position: absolute
           bottom: 12px
           right: 0
+  // .ball-wrapper
+  //   position: absolute
+  //   width: 20px
+  //   height: 20px
+  //   border-radius: 50%
+  //   &.hide
+  //     display: none
+  //   &.from
+  //     transition: left linear 1s,
+  //                 bottom ease-in 1s
+  //   &.to
+  //     left: 40px
+  //     bottom: 58px
 
 
 

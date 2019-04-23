@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="shopcart">
     <div class="content">
-      <div class="content-left">
+      <div class="content-left" @click = "toggleList">
         <div class="logo-wrapper">
           <div class="logo" :class="{'highlight':totalCount>0}">
             <span class="icon-shopping_cart"></span>
@@ -21,10 +21,33 @@
         </div>
       </div>
     </div>
+    <transition name="list">
+      <div class="shopcart-list" v-show="listShow">
+        <div class="list-header">
+          <span class="title">购物车</span>
+          <span class="clear" @click="clearall">清空</span>
+        </div>
+        <div class="list-content" ref="listContent">
+          <ul>
+            <li class="food" v-for="food in selectFoods">
+              <span class="foodname">{{food.name}}</span>
+              <span class="foodPrice">￥{{food.price*food.count}}</span>
+              <div class="cartControl-wrapper">
+                <cartControl :food="food"></cartControl>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
+import cartControl from '../cartControl/cartControl';
+import Bscroll from 'better-scroll';
+
+
 export default {
   props: {
     deliveryPrice: {
@@ -40,6 +63,11 @@ export default {
       default () {
         return [];
       }
+    }
+  },
+  data() {
+    return {
+      listShow: false
     }
   },
   computed: {
@@ -60,19 +88,48 @@ export default {
     payDes() {
       if (this.totalPrice === 0) {
         return `￥${this.minPrice}起送`;
-      } else if (this.totalPrice < this.minPrice)
-      {
-        let diff = this.minPrice-this.totalPrice;
+      } else if (this.totalPrice < this.minPrice) {
+        let diff = this.minPrice - this.totalPrice;
         return `还差￥${diff}起送`;
       } else {
         return `去结算`;
       }
     }
+  },
+  methods: {
+    toggleList() {
+      if (this.totalCount > 0) {
+        this.listShow = !this.listShow;
+      }
+      if(this.listShow){
+        this.$nextTick(()=>{
+          if(!this.listScroll){
+            this.listScroll = new Bscroll(this.$refs.listContent, {
+              click: true,
+              probeType:3
+            });
+          }else{
+            this.listScroll.refresh();
+          }
+        })
+      }
+    },
+    clearall(){
+      this.selectFoods.forEach((food)=>{
+        food.count = 0;
+      })
+    }
+  },
+  components: {
+    cartControl
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+@import '../../common/stylus/mixin.styl'
+
+
 .shopcart
   position: fixed
   width: 100%
@@ -160,6 +217,61 @@ export default {
         &.payment
           background-color: #00b43c
           color: #fff
+  .shopcart-list
+    position: absolute
+    width: 100%
+    top: 0
+    left: 0
+    z-index: -1
+    transform: translate3d(0,-100%,0)
+    background-color: #fff
+  .list-enter-active, .list-leave-active
+    transition: transform 0.5s linear
+  .list-enter, .list-leave-to
+    transform: translate3d(0,0,0)
+  .shopcart-list
+    .list-header
+      height: 40px
+      padding: 0 18px
+      background-color: #f3f5f7
+      line-height: 40px
+      color: rgb(7, 17, 27)
+      border-bottom: 1px solid rgba(7, 17, 27, 0.1)
+      .title
+        float: left
+        font-size: 14px
+      .clear
+        float: right
+        font-size: 12px
+        color: rgb(0, 160, 220)
+    .list-content
+      position:relative
+      padding: 0 18px
+      max-height: 217px
+      overflow:hidden
+      .food
+        box-sizing: border-box
+        height: 48px
+        padding: 12px 0
+        border-1px(rgba(7,17,27,0.1))
+        .foodname
+          float: left
+          font-size: 14px
+          line-height: 24px
+        .foodPrice
+          position: absolute
+          right: 100px
+          bottom: 12px
+          font-size: 14px
+          font-weight: 700
+          line-height: 24px
+          color: rgb(240, 20, 20)
+        .cartControl-wrapper
+          position: absolute
+          right: 0
+          bottom: 6px
+
+
 
 
 </style>
