@@ -48,6 +48,7 @@ import cartControl from '../cartControl/cartControl';
 import Bscroll from 'better-scroll';
 
 
+
 export default {
   props: {
     deliveryPrice: {
@@ -117,7 +118,8 @@ export default {
     clearall(){
       this.selectFoods.forEach((food)=>{
         food.count = 0;
-      })
+      });
+      this.listShow = false;
     }
   },
   components: {

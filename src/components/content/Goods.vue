@@ -16,8 +16,8 @@
         <li v-for="item in goods" class="foods-list foods-list-hook">
           <h2 class="title">{{item.name}}</h2>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
-              <div class="icon">
+            <li v-for="food in item.foods" class="food-item border-1px" >
+              <div class="icon" @click="selectedFood(food,$event)">
                 <img :src="food.icon" width="57" height="57">
               </div>
               <div class="content">
@@ -45,7 +45,16 @@
     <!-- <div class="ball-wrapper" ref="ballWrapper">
       <div  class="ball-hook" @transitioned="ballclass" :class = "ballClassMap[indexOfBall]"></div>
     </div> -->
-    <shopcart  :selectFoods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+
+    <shopcart  :selectFoods="selectFoods"
+               :deliveryPrice="seller.deliveryPrice"
+               :minPrice="seller.minPrice">
+    </shopcart>
+    <food
+          :food = "foodshow"
+          @back="change()"
+
+    ></food>
   </div>
 </template>
 
@@ -53,7 +62,7 @@
 import Bscroll from 'better-scroll';
 import shopcart from '../shopcart/shopcart'
 import cartControl from '../cartControl/cartControl'
-
+import food from '../food/food'
 
 const ERR_OK = 0;
 const axios = require('axios');
@@ -68,13 +77,14 @@ export default {
       goods: [],
       foodsHeight: [],
       scrollY: 0,
-      indexOfBall: 0
+      indexOfBall: 0,
+      foodshow: {}
     }
   },
   created() {
     this.getAjax();
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
-      // this.ballClassMap = ['hide', 'from', 'to']
+    // this.ballClassMap = ['hide', 'from', 'to']
   },
   computed: {
     currentIndex: function() {
@@ -101,7 +111,8 @@ export default {
   },
   components: {
     shopcart,
-    cartControl
+    cartControl,
+    food
   },
   methods: {
     getAjax: function() {
@@ -130,6 +141,12 @@ export default {
       this.foodsScroll.on('scroll', (pos) => {
         this.scrollY = Math.abs(Math.round(pos.y));
       });
+    },
+    selectedFood(food, event) {
+      if (!event._constructed){
+        return;
+      }
+      this.foodshow = food;
     },
     _calculateHeight() {
       let foods = this.$refs.foodsWrapper.getElementsByClassName('foods-list-hook');
@@ -162,6 +179,9 @@ export default {
       // console.log()
       //  this.indexOfBall = 2;
 
+    },
+    change(){
+      this.foodshow  = {};
     }
     //, ballclass(){
     //   this.indexOfBall = 0;
