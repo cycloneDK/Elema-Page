@@ -9,7 +9,7 @@
     <span class="icon-check_circle"></span>
     <span class="text">只看有内容的评价</span>
   </div>
-  <div class="list">
+  <div class="list" ref="list">
     <ul>
       <li v-for="list in ratings" class="listItem">
         <div class="up">
@@ -29,9 +29,12 @@
 </template>
 
 <script>
+import Bscroll from 'better-scroll'
+
 const ALL = "全部"
 const POSITIVE = "推荐"
 const NEGETIVE = "吐槽"
+
 
 
 export default {
@@ -43,10 +46,14 @@ export default {
       }
     }
   },
-
   created() {
-    this.classMap = ['icon-thumb_down', 'icon-thumb_up'];
+    this.classMap = ['icon-thumb_up', 'icon-thumb_down'];
 
+  },
+  mounted(){
+    this.$nextTick(()=>{
+      this._initScorll();
+    })
   },
   computed: {
     all: function() {
@@ -64,7 +71,12 @@ export default {
     }
   },
   methods: {
-
+    _initScorll(){
+      this.initScorll = new Bscroll(this.$refs.list,{
+        click:true
+      });
+      console.log(this.initScorll)
+    }
 
   }
 }
@@ -102,6 +114,8 @@ export default {
       line-height: 24px
       vertical-align: top
   .list
+    height: 200px
+    z-index: -10
     .listItem
       padding: 16px 0
       border-bottom: 1px solid rgba(7, 17, 27, 0.1)
