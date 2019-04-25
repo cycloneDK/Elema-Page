@@ -75,7 +75,7 @@ export default {
       this.initScorll = new Bscroll(this.$refs.list,{
         click:true
       });
-      console.log(this.initScorll)
+
     }
 
   }
@@ -115,6 +115,7 @@ export default {
       vertical-align: top
   .list
     height: 200px
+    overflow: hidden
     z-index: -10
     .listItem
       padding: 16px 0
