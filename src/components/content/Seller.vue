@@ -49,6 +49,23 @@
           </li>
         </ul>
       </div>
+      <div class="line"></div>
+      <div class="pictures">
+        <h1 class="text">商家实景</h1>
+        <div class="picturesWrapper" ref='picturesWrapper'>
+          <ul ref='picturesItem' >
+            <li v-for='pic in seller.pics' class="pics">
+              <img :src="pic" alt="商家实景" class="image">
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="line"></div>
+      <div class="infos">
+        <h1 class="title">商家信息</h1>
+        <p v-for="info in seller.infos" class="text">{{info}}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -73,7 +90,21 @@ export default {
       this.initScorll = new Bscroll(this.$refs.seller,{
         click:true
       });
-    }
+      this.$refs.picturesItem.style.width = 4*126+'px';
+      if(!this.picsScroll){
+        this.picsScroll = new Bscroll(this.$refs.picturesWrapper,{
+          click: true,
+          startX: 0,
+          scrollY:false,
+          scrollX:true,
+          eventPassthrough: "vertical"
+        });
+      }else{
+        this.picsScroll.refresh();
+      }
+
+    },
+
   },
   components:{
     star
@@ -182,6 +213,39 @@ export default {
       .text
         display: inline-block
         line-height: 16px
+  .pictures
+    box-sizing: border-box
+    width: 100%
+    padding: 18px
+    text-align: left
+    .text
+      font-size: 14px
+      margin-bottom: 12px
+      color: rgb(7, 17, 27)
+    .picturesWrapper
+      overflow: hidden
+      height: 90px
+      .pics
+        display: inline-block
+        width: 120px
+        height: 90px
+        margin-right: 6px
+        &:lastChild
+          margin-right: 0
+        .image
+          width: 120px
+          height: 90px
+  .infos
+    margin: 18px
+    text-align: left
+    .title
+      margin-bottom: 12px
+    .text
+      padding: 16px 12px 16px 12px
+      border-top: 1px solid rgba(7, 17, 27, 0.1)
+      font-size: 12px
+      line-height: 16px
+
 
 
 
