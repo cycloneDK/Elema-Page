@@ -1,58 +1,61 @@
 <template lang="html">
-  <div class="seller">
-    <div class="basic">
-      <div class="left">
-        <h1 class="name">{{seller.name}}</h1>
-        <div class="star-wrapper">
-          <star :size = "36"
-                :score = "seller.score"
-                class="star"
-          ></star>
-          <span class="title">月售{{seller.sellCount}}单</span>
+  <div class="seller" ref="seller">
+    <div class="seller-wrapper">
+      <div class="basic">
+        <div class="left">
+          <h1 class="name">{{seller.name}}</h1>
+          <div class="star-wrapper">
+            <star :size = "36"
+                  :score = "seller.score"
+                  class="star"
+            ></star>
+            <span class="title">月售{{seller.sellCount}}单</span>
+          </div>
+        </div>
+        <div class="right">
+          <div class="heart">
+            <span class="icon-favorite"></span>
+          </div>
+          <span>已收藏</span>
         </div>
       </div>
-      <div class="right">
-        <div class="heart">
-          <span class="icon-favorite"></span>
+      <div class="info">
+        <div class="minPrice">
+          <h1 class="title">起送价</h1>
+          <span class="value">{{seller.minPrice}}<span class="unit">元</span>
+          </span>
         </div>
-        <span>已收藏</span>
-      </div>
-    </div>
-    <div class="info">
-      <div class="minPrice">
-        <h1 class="title">起送价</h1>
-        <span class="value">{{seller.minPrice}}<span class="unit">元</span>
+        <div class="deliveryPrice">
+          <h1 class="title">商家配送费</h1>
+          <span class="value">{{seller.deliveryPrice}}<span class="unit">元</span>
+          </span>
+        </div>
+        <div class="deliveryTime">
+          <h1 class="title">平均配送时间</h1>
+          <span class="value">{{seller.deliveryTime}}<span class="unit">分钟</span>
         </span>
+        </div>
       </div>
-      <div class="deliveryPrice">
-        <h1 class="title">商家配送费</h1>
-        <span class="value">{{seller.deliveryPrice}}<span class="unit">元</span>
-        </span>
+      <div class="line"></div>
+      <div class="bulletin">
+        <h1 class="title">公告与活动</h1>
+        <p class="content">{{seller.bulletin}}</p>
       </div>
-      <div class="deliveryTime">
-        <h1 class="title">平均配送时间</h1>
-        <span class="value">{{seller.deliveryTime}}<span class="unit">分钟</span>
-      </span>
+      <div class="supports">
+        <ul>
+          <li v-for="support in seller.supports" class="support">
+            <span :class="classMap[support.type]" class="icon"></span>
+            <span class="text">{{support.description}}</span>
+          </li>
+        </ul>
       </div>
-    </div>
-    <div class="line"></div>
-    <div class="bulletin">
-      <h1 class="title">公告与活动</h1>
-      <p class="content">{{seller.bulletin}}</p>
-    </div>
-    <div class="supports">
-      <ul>
-        <li v-for="support in seller.supports">
-          <span class="this.classMap[support.type]"></span>
-          <span class="text">{{support.description}}</span>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
 
 <script>
 import star from '../star/star'
+import Bscroll from 'better-scroll'
 
 
 export default {
@@ -61,6 +64,16 @@ export default {
   },
   created(){
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+    this.$nextTick(()=>{
+      this._initScorll();
+    })
+  },
+  methods:{
+    _initScorll(){
+      this.initScorll = new Bscroll(this.$refs.seller,{
+        click:true
+      });
+    }
   },
   components:{
     star
@@ -140,6 +153,37 @@ export default {
       font-size: 12px
       line-height: 24px
       color: rgb(140, 20, 20)
+  .supports
+    padding: 0 12px 0 12px
+    margin: 0 18px 0 18px
+    font-size: 12px
+    text-align: left
+    color: rgb(7, 17, 27)
+    .support
+      padding: 16px 0 16px 0
+      border-top: 1px solid rgba(7, 17, 27,0.1)
+      vertical-align: top
+      .icon
+        display: inline-block
+        height: 16px
+        width: 16px
+        background-size: 16px 16px
+        background-repeat: no-repeat
+        &.decrease
+          bg-img('decrease_3')
+        &.discount
+          bg-img('discount_3')
+        &.guarantee
+          bg-img('guarantee_3')
+        &.invoice
+          bg-img('invoice_3')
+        &.special
+          bg-img('special_3')
+      .text
+        display: inline-block
+        line-height: 16px
+
+
 
 
 
